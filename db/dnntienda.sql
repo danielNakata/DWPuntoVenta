@@ -426,6 +426,501 @@ LOCK TABLES `tventasdetalle` WRITE;
 /*!40000 ALTER TABLE `tventasdetalle` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tventasdetalle` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'dnntienda'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `SP_AGREGA_PRODUCTO` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AGREGA_PRODUCTO`(
+	paclaveProveedor int
+	,paproducto varchar(255)
+	,padescripcion text
+	,paclaveTipo int
+	,pacosto double
+	,paventa double
+	,paiva double
+	,paieps double
+	,paclaveunidad int
+	,pacantidadunidad double
+	,pacodigoBarras varchar(50)
+)
+BEGIN
+	DECLARE vlExisteProveedor INT;
+	DECLARE vlExisteProducto INT;
+	DECLARE vlMaxClaveProducto INT;
+	DECLARE res int;
+	declare msg varchar(100);
+	set vlMaxClaveProducto = 0;
+	
+	set res = 0;
+	set msg = '';
+	
+	select ifnull(
+	(select claveProveedor
+	  from tproveedores
+	 where claveProveedor = paclaveProveedor),0)
+	 into vlExisteProveedor;
+	 
+	select ifnull(
+  	(SELECT MAX(claveProducto)
+  	  FROM tproductos),0)
+    INTO vlMaxClaveProducto; 
+	 
+	 
+	if vlExisteProveedor > 0
+	then
+		set vlMaxClaveProducto = vlMaxClaveProducto + 1;
+		insert into tproductos (claveProducto, claveProveedor, producto, descripcion, claveTipo
+		,claveEstado, costo, venta, iva, ieps, fechaRegistro, claveUnidad, cantidadUnidad, codigoBarras)
+		value(vlMaxClaveProducto, paclaveProveedor, paproducto, padescripcion, paclaveTipo,
+		1, pacosto, paventa, paiva, paieps, current_timestamp(), paclaveunidad, pacantidadunidad,
+		pacodigoBarras);
+		select 1 as res, 'PRODUCTO AGREGADO' as msg;
+	else
+		select 0 as res, 'EL PROVEEDOR NO EXISTE' as msg;
+	end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_AGREGA_PROVEEDOR` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AGREGA_PROVEEDOR`(
+       in panombre varchar(100)
+       ,in parazonsocial varchar(100)
+       ,in paemail varchar(255)
+       ,in patelefonos varchar(255)
+)
+BEGIN
+	DECLARE vlMaxClaveProveedor int;
+	DECLARE vlExisteProveedor int;
+	set vlMaxClaveProveedor = 0;
+	set vlExisteProveedor = 0;
+	
+   select ifnull(
+  	(SELECT MAX(claveProveedor)
+  	  FROM tproveedores),0)
+    INTO vlMaxClaveProveedor;
+	  
+	SELECT COUNT(*)
+	  INTO vlExisteProveedor
+	  FROM tproveedores
+	 WHERE razonSocial = parazonsocial;
+	 
+	 
+	if vlExisteProveedor = 0 
+	then
+		set vlMaxClaveProveedor = vlMaxClaveProveedor + 1;
+		insert into tproveedores (claveProveedor, nombre, razonSocial, email, telefonos, fechaRegistro, activo)
+		values (vlMaxClaveProveedor, panombre, parazonsocial, paemail, patelefonos, current_timestamp(), 1);
+		select 1 as res, 'PROVEEDOR AGREGADO' as msg;
+	else
+		UPDATE tproveedores set email = paemail, telefonos = patelefonos
+		WHERE razonSocial = parazonsocial;
+		select 1 as res, 'PROVEEDOR MODIFICADO' as msg;
+	end if;
+     
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_CONSULTA_DATOS_USUARIO` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CONSULTA_DATOS_USUARIO`(`paTipoBsq` int(3), `paFiltro` varchar(100))
+BEGIN
+     declare vlTipoBsqLogin int(3);
+     declare vlTipoBsqNombre int(3);
+     declare vlTipoBsqApellido int(3);
+     declare vlTipoBsqEstado int(3);
+     declare vlTipoBsqPerfil int(3);
+     
+     set vlTipoBsqLogin = 1;
+     set vlTipoBsqNombre = 2;
+     set vlTipoBsqApellido = 3;
+     set vlTipoBsqEstado = 4;
+     set vlTipoBsqPerfil = 5;
+     
+     case paTipoBsq 
+          when vlTipoBsqLogin then 
+               SELECT a.login as login
+                 ,a.contrasena as contrasena
+                 ,upper(a.nombre) as nombre
+                 ,upper(a.apellidos) as apellidos
+                 ,a.activo as idactivo
+                 ,a.fecharegistro as fechareg
+                 ,a.fechaultimologin as ultimologin
+                 ,a.clavePerfil as idperfil
+                 ,b.perfil as perfil
+            FROM tusuarios a
+           INNER JOIN tcatperfiles b ON b.clavePerfil = a.clavePerfil
+           WHERE a.login = paFiltro;
+           
+           when vlTipoBsqNombre then 
+               SELECT a.login as login
+                 ,a.contrasena as contrasena
+                 ,upper(a.nombre) as nombre
+                 ,upper(a.apellidos) as apellidos
+                 ,a.activo as idactivo
+                 ,a.fecharegistro as fechareg
+                 ,a.fechaultimologin as ultimologin
+                 ,a.clavePerfil as idperfil
+                 ,b.perfil as perfil
+            FROM tusuarios a
+           INNER JOIN tcatperfiles b ON b.clavePerfil = a.clavePerfil
+           WHERE a.nombre like concat(paFiltro,'%');
+
+           when vlTipoBsqApellido then 
+               SELECT a.login as login
+                 ,a.contrasena as contrasena
+                 ,upper(a.nombre) as nombre
+                 ,upper(a.apellidos) as apellidos
+                 ,a.activo as idactivo
+                 ,a.fecharegistro as fechareg
+                 ,a.fechaultimologin as ultimologin
+                 ,a.clavePerfil as idperfil
+                 ,b.perfil as perfil
+            FROM tusuarios a
+           INNER JOIN tcatperfiles b ON b.clavePerfil = a.clavePerfil
+           WHERE a.apellidos like concat(paFiltro,'%');
+           
+           when vlTipoBsqEstado then 
+               SELECT a.login as login
+                 ,a.contrasena as contrasena
+                 ,upper(a.nombre) as nombre
+                 ,upper(a.apellidos) as apellidos
+                 ,a.activo as idactivo
+                 ,a.fecharegistro as fechareg
+                 ,a.fechaultimologin as ultimologin
+                 ,a.clavePerfil as idperfil
+                 ,b.perfil as perfil
+            FROM tusuarios a
+           INNER JOIN tcatperfiles b ON b.clavePerfil = a.clavePerfil
+           WHERE a.activo = paFiltro;
+           
+           when vlTipoBsqPerfil then 
+               SELECT a.login as login
+                 ,a.contrasena as contrasena
+                 ,upper(a.nombre) as nombre
+                 ,upper(a.apellidos) as apellidos
+                 ,a.activo as idactivo
+                 ,a.fecharegistro as fechareg
+                 ,a.fechaultimologin as ultimologin
+                 ,a.clavePerfil as idperfil
+                 ,b.perfil as perfil
+            FROM tusuarios a
+           INNER JOIN tcatperfiles b ON b.clavePerfil = a.clavePerfil
+           WHERE a.clavePerfil = paFiltro;
+                 
+           else
+               begin
+                    select 0 as res, 'OPCION INVALIDA' as msg;
+               end;
+           
+           end case;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_CONSULTA_PRODUCTO` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CONSULTA_PRODUCTO`(
+paTipoBsq int(11)
+,paFiltro text
+)
+BEGIN
+	declare vlBsqxClaveProd int;
+	declare vlBsqxClaveProv int;
+	declare vlBsqxBarCod int;
+	declare vlBsqxNombre int;
+	declare vlBsqxEstado int;
+	declare vlBsqxTipo int;
+	
+	set vlBsqxClaveProd = 1;
+	set vlBsqxClaveProv = 2;
+	set vlBsqxBarCod = 3;
+	set vlBsqxNombre = 4;
+	set vlBsqxEstado = 5;
+	set vlBsqxTipo = 6;
+	
+	case paTipoBsq
+		when vlBsqxClaveProd then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.claveProducto = paFiltro;
+		when vlBsqxClaveProv then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.claveProveedor = paFiltro;
+		when vlBsqxBarCod then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.codigoBarras = paFiltro;
+		when vlBsqxNombre then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.producto like concat(paFiltro,'%');
+		when vlBsqxEstado then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.claveEstado = paFiltro;
+		when vlBsqxTipo then
+			SELECT a.claveProducto
+				   ,a.claveProveedor
+				   ,upper(b.nombre) as proveedor
+				   ,upper(a.producto) as producto
+				   ,a.claveTipo
+				   ,a.claveEstado
+				   ,a.costo
+				   ,a.venta
+				   ,a.iva
+				   ,a.ieps
+				   ,a.fechaRegistro
+				   ,a.fechaUltimaModif
+				   ,a.fechaUltimaCompra
+				   ,a.cantidadUltimaCompra
+				   ,a.claveUnidad
+				   ,a.cantidadUnidad
+				   ,a.codigoBarras
+				   ,upper(c.estado) as estado
+				   ,upper(d.tipo) as tipo
+				   ,upper(e.unidad) as unidad
+				   ,upper(e.abrevia) as abrevia
+			  FROM tproductos a 
+			 INNER JOIN tproveedores b on b.claveProveedor = a.claveProveedor
+			 INNER JOIN tcatalogoestados c on c.claveEstado = a.claveEstado
+			 INNER JOIN tcatalogotipos d on d.claveTipo = a.claveTipo
+			 INNER JOIN tcatalogounidades e on e.claveUnidad = a.claveUnidad
+			 WHERE a.claveTipo = paFiltro;
+		else
+			begin
+				select 0 as res, 'TIPO DE BUSQUEDA NO VALIDA' as msg;
+			end;
+	end case;
+		
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_CONSULTA_PROVEDOR` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CONSULTA_PROVEDOR`(`paTipoBsq` int(11))
+BEGIN
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_INICIO_SESION` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_INICIO_SESION`(palogin varchar(100), pacontrasena varchar(200))
+BEGIN
+     declare vlExisteUsuario int(11);
+     declare vlUsuarioCompara varchar(100);
+     declare vlContrasenaCompara varchar(200);
+     select ifnull((select 1 from tusuarios where login = palogin),0) into vlExisteUsuario;
+     
+     if vlExisteUsuario = 1 then
+        select login, contrasena 
+          into vlUsuarioCompara, vlContrasenaCompara 
+          from tusuarios 
+         where login = palogin;
+         
+        if vlContrasenaCompara = pacontrasena then
+           UPDATE tusuarios set fechaultimologin = now() where login = palogin;
+           insert into tlogacceso(login, accesoCorrecto, comentario) values (palogin, 1, 'INICIO DE SESION CORRECTO');
+            select 1 AS RES, 'INICIO DE SESION CORRECTO' AS MSG;
+        else
+            insert into tlogacceso(login, accesoCorrecto, comentario) values (palogin, 2, 'CONTRASEÑA INCORRECTA');
+            select 0 AS RES, 'CONTRASEÑA INCORRECTA' AS MSG;
+        end if;
+     else
+         insert into tlogacceso(login, accesoCorrecto, comentario) values (palogin, 3, 'USUARIO NO EXISTE');
+         select 0 AS RES, 'NO EXISTE EL USUARIO' AS MSG;
+     end if;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -436,4 +931,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-23 22:14:54
+-- Dump completed on 2015-04-23 22:20:31
