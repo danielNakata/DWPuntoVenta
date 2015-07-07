@@ -43,7 +43,12 @@ public class DAOBase {
         return lista;
     }
     
-    
+    /**
+     * Metodo para cerrar las conexion
+     * @param con
+     * @param st
+     * @param rs 
+     */
     public void cerrar(java.sql.Connection con, java.sql.CallableStatement st, java.sql.ResultSet rs){
         try{
             if(st != null)

@@ -5,6 +5,8 @@
  */
 package dwpuntoventa.dto;
 
+import dwpuntoventa.dto.out.ProductoDTO;
+import dwpuntoventa.dto.out.UsuarioDTO;
 import java.util.ArrayList;
 
 /**
@@ -16,6 +18,9 @@ public class RespGralDTO {
     private String msg = "";
     private int numReg = 0;
     private java.util.ArrayList<CampoDTO> listaCampos = null;
+    private UsuarioDTO usuarioLog = null;
+    private java.util.ArrayList<UsuarioDTO> listaUsuarioDTO = null;
+    private java.util.ArrayList<ProductoDTO> listaProductoDTO = null;
 
     public int getRes() {
         return res;
@@ -41,17 +46,41 @@ public class RespGralDTO {
         this.numReg = numReg;
     }
 
-    public ArrayList<CampoDTO> getListaCampos() {
+    public java.util.ArrayList<CampoDTO> getListaCampos() {
         return listaCampos;
     }
 
-    public void setListaCampos(ArrayList<CampoDTO> listaCampos) {
+    public void setListaCampos(java.util.ArrayList<CampoDTO> listaCampos) {
         this.listaCampos = listaCampos;
+    }
+
+    public UsuarioDTO getUsuarioLog() {
+        return usuarioLog;
+    }
+
+    public void setUsuarioLog(UsuarioDTO usuarioLog) {
+        this.usuarioLog = usuarioLog;
+    }
+
+    public ArrayList<UsuarioDTO> getListaUsuarioDTO() {
+        return listaUsuarioDTO;
+    }
+
+    public void setListaUsuarioDTO(ArrayList<UsuarioDTO> listaUsuarioDTO) {
+        this.listaUsuarioDTO = listaUsuarioDTO;
+    }
+
+    public ArrayList<ProductoDTO> getListaProductoDTO() {
+        return listaProductoDTO;
+    }
+
+    public void setListaProductoDTO(ArrayList<ProductoDTO> listaProductoDTO) {
+        this.listaProductoDTO = listaProductoDTO;
     }
 
     @Override
     public String toString() {
-        return "RepGralDTO{" + "res=" + res + ", msg=" + msg + ", numReg=" + numReg + ", listaCampos=" + listaCampos + '}';
+        return "RespGralDTO{" + "res=" + res + ", msg=" + msg + ", numReg=" + numReg + ", listaCampos=" + listaCampos + ", usuarioLog=" + usuarioLog + ", listaUsuarioDTO=" + listaUsuarioDTO + ", listaProductoDTO=" + listaProductoDTO + '}';
     }
 
     

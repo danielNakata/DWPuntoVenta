@@ -5,14 +5,13 @@
  */
 package dwpuntoventa.db.imp;
 
-import dwpuntoventa.db.qry.IUsuarios;
+import dwpuntoventa.db.qry.IProductos;
 import dwpuntoventa.db.utils.Conexion;
 import dwpuntoventa.db.utils.DAOBase;
 import dwpuntoventa.dto.CampoDTO;
 import dwpuntoventa.dto.RespGralDTO;
-import dwpuntoventa.dto.out.UsuarioDTO;
+import dwpuntoventa.dto.out.ProductoDTO;
 import dwpuntoventa.dto.param.ConsultaBaseDTO;
-import dwpuntoventa.dto.param.IniciaSesionDTO;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,21 +20,22 @@ import java.sql.ResultSet;
  *
  * @author danie_000
  */
-public class DAOUsuarios extends DAOBase implements IUsuarios{
+public class DAOProductos extends DAOBase implements IProductos{
     
     private Conexion conex = null;
     
     /**
-     * Metodo para iniciar sesion
+     * Consulta de datos de productos
      * @param param
      * @return 
      */
-    public RespGralDTO iniciaSesion(IniciaSesionDTO param){
+    public RespGralDTO consultaDatosProductos(ConsultaBaseDTO param){
         RespGralDTO resp = new RespGralDTO();
         Connection con = null;
         CallableStatement st = null;
         ResultSet rs = null;
         int paramIn = 1, paramOut = 1;
+        java.util.ArrayList<ProductoDTO> lista = new java.util.ArrayList();
         try{
             resp.setMsg("LOS PARAMETROS NO SE RECIBIERON CORRECTAMENTE");
             if(param != null){
@@ -44,51 +44,7 @@ public class DAOUsuarios extends DAOBase implements IUsuarios{
                 con = conex.getConexion();
                 if(con != null){
                     resp.setMsg("NO SE PUDO REALIZAR LA CONSULTA");
-                    st = con.prepareCall(spInicioSesion);
-                    st.setString(paramIn++, param.getUsuario());
-                    st.setString(paramIn++, param.getContrasena());
-                    
-                    rs = st.executeQuery();
-                    
-                    resp.setMsg("NO SE PUDO OBTENER DATOS DE LA CONSULTA");
-                    if(rs != null){
-                        while(rs.next()){
-                            resp.setRes(rs.getInt(1));
-                            resp.setMsg(rs.getString(2));
-                        }
-                    }
-                }
-            }
-        }catch(Exception ex){
-            resp.setRes(0);
-            resp.setMsg(ex.toString());
-        }finally{
-            cerrar(con, st, rs);
-        }
-        return resp;
-    }
-    
-    /**
-     * Metodo para consultar los datos del usuario
-     * @param param
-     * @return 
-     */
-    public RespGralDTO consultaDatosUsuario(ConsultaBaseDTO param){
-        RespGralDTO resp = new RespGralDTO();
-        Connection con = null;
-        CallableStatement st = null;
-        ResultSet rs = null;
-        int paramIn = 1, paramOut = 1;
-        java.util.ArrayList<UsuarioDTO> lista = new java.util.ArrayList();
-        try{
-            resp.setMsg("LOS PARAMETROS NO SE RECIBIERON CORRECTAMENTE");
-            if(param != null){
-                resp.setMsg("NO SE PUDO REALIZAR LA CONEXION CON LA BASE DE DATOS");
-                conex = new Conexion();
-                con = conex.getConexion();
-                if(con != null){
-                    resp.setMsg("NO SE PUDO REALIZAR LA CONSULTA");
-                    st = con.prepareCall(spConsultaDatosUsuario);
+                    st = con.prepareCall(spConsultaProductos);
                     st.setInt(paramIn++, param.getTipoBusqueda());
                     st.setString(paramIn++, param.getFiltro());
                     
@@ -99,7 +55,7 @@ public class DAOUsuarios extends DAOBase implements IUsuarios{
                         java.util.ArrayList<CampoDTO> listaCampos = getListaCampos(rs.getMetaData());
                         if(!listaCampos.isEmpty()){
                             while(rs.next()){
-                                UsuarioDTO fila = new UsuarioDTO();
+                                ProductoDTO fila = new ProductoDTO();
                                 for(CampoDTO campo : listaCampos){
                                     switch(campo.getIdTipoCampo()){
                                         case java.sql.Types.DOUBLE:
@@ -129,7 +85,7 @@ public class DAOUsuarios extends DAOBase implements IUsuarios{
                             resp.setMsg("CONSULTA REALIZADA CORRECTAMENTE");
                             resp.setRes(1);
                             resp.setListaCampos(listaCampos);
-                            resp.setListaUsuarioDTO(lista);
+                            resp.setListaProductoDTO(lista);
                         }
                     }
                 }
@@ -142,5 +98,5 @@ public class DAOUsuarios extends DAOBase implements IUsuarios{
         }
         return resp;
     }
-    
+
 }

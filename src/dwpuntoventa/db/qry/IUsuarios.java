@@ -11,6 +11,18 @@ package dwpuntoventa.db.qry;
  */
 public interface IUsuarios {
     
-    public static String spInicioSesion = "{call SP_INICIO_SESION(?,?)}";
+    /**
+     * Llamada al SP para iniciar sesion
+     */
+    public static String spInicioSesion = "{call dnntienda.SP_INICIO_SESION(?,?)}";
     
+    /**
+     * Llamada al SP para obtener los datos del usuario
+     */
+    public static String spConsultaDatosUsuario = "{call dnntienda.SP_CONSULTA_DATOS_USUARIO(?,?)}";
+    
+    /**
+     * Consulta para agregar un usuario nuevo
+     */
+    public static String spAgregaUsuario = "{call dnntienda.SP_AGREGA_USUARIO(?,?,?,?,?,?,?)}";
 }
