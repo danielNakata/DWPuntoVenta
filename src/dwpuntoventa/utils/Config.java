@@ -15,10 +15,13 @@ public class Config {
     public static String rutaArchConfig = rutaBase+"config"+java.io.File.separator+"DWPuntoVenta.config";
     public static String rutaArchLog = rutaBase+"log"+java.io.File.separator+"DWPuntoVenta.log";
     
-    public static String nombreApp = "DWPuntoVenta";
-    public static String nombreAppComercial = "DWPuntoVenta";
+    public static String nombreApp = "DWStockControl";
+    public static String nombreAppComercial = "Stock Control";
     public static String nombreOwner = "Daniel Ortega";
     public static String nombreDeveloper = "DW";
+    public static String version = "BETA";
+    public static String fechaCompilacion = new java.util.Date().toString();
+    public static String detalleVersion = "Version Beta en Construccion";
     
     public static String dbHost = "";
     public static String dbPort = "";
