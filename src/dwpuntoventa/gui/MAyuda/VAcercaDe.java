@@ -5,6 +5,7 @@
  */
 package dwpuntoventa.gui.MAyuda;
 
+import appdan.applogger.main.AppLogger;
 import dwpuntoventa.utils.Config;
 
 /**
@@ -169,7 +170,17 @@ public class VAcercaDe extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
-        // TODO add your handling code here:
+        try{
+            this.dispose();
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: btnCerrarActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: btnCerrarActionPerformed Ex:" + ex.toString()));
+        }
     }//GEN-LAST:event_btnCerrarActionPerformed
 
 

@@ -5,7 +5,10 @@
  */
 package dwpuntoventa.gui.main;
 
+import appdan.applogger.main.AppLogger;
+import dwpuntoventa.gui.MArticulos.VCatArticulos;
 import dwpuntoventa.gui.MAyuda.VAcercaDe;
+import dwpuntoventa.utils.Config;
 
 /**
  *
@@ -15,10 +18,12 @@ public class VMain extends javax.swing.JFrame {
 
     
     private VAcercaDe vacercade = null;
+    private VCatArticulos vcatarticulos = null;
     /**
      * Creates new form VMain
      */
     public VMain() {
+        Config.loadConfig();
         initComponents();
         this.setVisible(true);
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -42,6 +47,10 @@ public class VMain extends javax.swing.JFrame {
         pnlTabReportes = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         menuApp = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        actSalir = new javax.swing.JMenuItem();
         menuArticulos = new javax.swing.JMenu();
         actCatArt = new javax.swing.JMenuItem();
         actNvoArt = new javax.swing.JMenuItem();
@@ -130,11 +139,34 @@ public class VMain extends javax.swing.JFrame {
         jTabbedPane1.addTab("Reportes", pnlTabReportes);
 
         menuApp.setText("Aplicacion");
+
+        jMenuItem1.setText("Iniciar Sesion");
+        menuApp.add(jMenuItem1);
+
+        jMenuItem2.setText("Bloquear Aplicacion");
+        menuApp.add(jMenuItem2);
+
+        jMenuItem3.setText("Cerrar Sesion");
+        menuApp.add(jMenuItem3);
+
+        actSalir.setText("Salir");
+        actSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actSalirActionPerformed(evt);
+            }
+        });
+        menuApp.add(actSalir);
+
         menuBar.add(menuApp);
 
         menuArticulos.setText("Articulos");
 
         actCatArt.setText("Catalogo");
+        actCatArt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actCatArtActionPerformed(evt);
+            }
+        });
         menuArticulos.add(actCatArt);
 
         actNvoArt.setText("Nuevo");
@@ -300,9 +332,69 @@ public class VMain extends javax.swing.JFrame {
             
             this.vacercade = null;
         }catch(Exception ex){
-            System.out.println("EX: actAcercaDeActionPerformed " + ex);
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: actAcercaDeActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: actAcercaDeActionPerformed Ex:" + ex.toString()));
         }
     }//GEN-LAST:event_actAcercaDeActionPerformed
+
+    private void actCatArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actCatArtActionPerformed
+        try{
+            if(vcatarticulos == null){
+                vcatarticulos = new VCatArticulos(Config.idtienda);
+                
+                this.vcatarticulos.setVisible(true);
+                this.vcatarticulos.setSize(this.vcatarticulos.getPreferredSize().width,this.vcatarticulos.getPreferredSize().height);
+                this.vcatarticulos.setLocation(this.centrarVentana(this.vcatarticulos.getSize()));
+                
+                this.panelDesk.add(vcatarticulos);
+                try{
+                    this.vcatarticulos.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatarticulos);
+            }else{
+                this.vcatarticulos.setVisible(true);
+                this.vcatarticulos.setSize(this.vcatarticulos.getPreferredSize().width,this.vcatarticulos.getPreferredSize().height);
+                this.vcatarticulos.setLocation(this.centrarVentana(this.vcatarticulos.getSize()));
+                try{
+                    this.vcatarticulos.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatarticulos);
+            }
+            
+            this.vcatarticulos = null;
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: actCatArtActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: actCatArtActionPerformed Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_actCatArtActionPerformed
+
+    private void actSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actSalirActionPerformed
+        try{
+            this.dispose();
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: actSalirActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: actSalirActionPerformed Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_actSalirActionPerformed
 
     
     /**
@@ -342,7 +434,11 @@ public class VMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem actRepExistencias;
     private javax.swing.JMenuItem actRepSalidas;
     private javax.swing.JMenuItem actRespaldo;
+    private javax.swing.JMenuItem actSalir;
     private javax.swing.JMenuItem actTienda;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenu menuApp;

@@ -5,6 +5,7 @@
  */
 package dwpuntoventa.db.imp;
 
+import appdan.applogger.main.AppLogger;
 import dwpuntoventa.db.qry.IProductos;
 import dwpuntoventa.db.utils.Conexion;
 import dwpuntoventa.db.utils.DAOBase;
@@ -12,6 +13,7 @@ import dwpuntoventa.dto.CampoDTO;
 import dwpuntoventa.dto.RespGralDTO;
 import dwpuntoventa.dto.out.ProductoDTO;
 import dwpuntoventa.dto.param.ConsultaBaseDTO;
+import dwpuntoventa.utils.Config;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -47,6 +49,7 @@ public class DAOProductos extends DAOBase implements IProductos{
                     st = con.prepareCall(spConsultaProductos);
                     st.setInt(paramIn++, param.getTipoBusqueda());
                     st.setString(paramIn++, param.getFiltro());
+                    st.setInt(paramIn++, param.getIdtienda());
                     
                     rs = st.executeQuery();
                     
@@ -93,6 +96,13 @@ public class DAOProductos extends DAOBase implements IProductos{
         }catch(Exception ex){
             resp.setRes(0);
             resp.setMsg(ex.toString());
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: consultaDatosProductos Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: consultaDatosProductos Ex:" + ex.toString()));
         }finally{
             cerrar(con, st, rs);
         }

@@ -23,6 +23,10 @@ public class Config {
     public static String fechaCompilacion = new java.util.Date().toString();
     public static String detalleVersion = "Version Beta en Construccion";
     
+    public static int idtienda = -1;
+    public static String nombreTienda = "";
+    public static String duenoTienda = "";
+    
     public static String dbHost = "";
     public static String dbPort = "";
     public static String dbName = "";
@@ -43,18 +47,22 @@ public class Config {
             props = new java.util.Properties();
             props.load(new java.io.FileInputStream(rutaArchConfig));
             if(props != null){
-                nombreApp = props.getProperty(nombreApp)==null?nombreApp:props.getProperty("nombreApp");
-                nombreAppComercial = props.getProperty(nombreAppComercial)==null?nombreAppComercial:props.getProperty("nombreAppComercial");
-                nombreOwner = props.getProperty(nombreOwner)==null?nombreOwner:props.getProperty("nombreOwner");
-                nombreDeveloper = props.getProperty(nombreDeveloper)==null?nombreDeveloper:props.getProperty("nombreDeveloper");
+                nombreApp = props.getProperty("nombreApp")==null?nombreApp:props.getProperty("nombreApp");
+                nombreAppComercial = props.getProperty("nombreAppComercial")==null?nombreAppComercial:props.getProperty("nombreAppComercial");
+                nombreOwner = props.getProperty("nombreOwner")==null?nombreOwner:props.getProperty("nombreOwner");
+                nombreDeveloper = props.getProperty("nombreDeveloper")==null?nombreDeveloper:props.getProperty("nombreDeveloper");
                 
-                dbHost = props.getProperty(dbHost)==null?dbHost:props.getProperty("dbHost");
-                dbPort = props.getProperty(dbPort)==null?dbPort:props.getProperty("dbPort");
-                dbName = props.getProperty(dbName)==null?nombreApp:props.getProperty("dbName");
-                dbUser = props.getProperty(dbUser)==null?dbUser:props.getProperty("dbUser");
-                dbPass = props.getProperty(dbPass)==null?dbPass:props.getProperty("dbPass");
-                dbDriver = props.getProperty(dbDriver)==null?dbDriver:props.getProperty("dbDriver");
-                dbUrl = props.getProperty(dbUrl)==null?dbUrl:props.getProperty("dbUrl");
+                idtienda = props.getProperty("idtienda")==null?idtienda:Integer.parseInt(props.getProperty("idtienda"));
+                nombreTienda = props.getProperty("nombreTienda")==null?nombreTienda:props.getProperty("nombreTienda");
+                duenoTienda = props.getProperty("duenoTienda")==null?duenoTienda:props.getProperty("duenoTienda");
+                
+                dbHost = props.getProperty("dbHost")==null?dbHost:props.getProperty("dbHost");
+                dbPort = props.getProperty("dbPort")==null?dbPort:props.getProperty("dbPort");
+                dbName = props.getProperty("dbName")==null?nombreApp:props.getProperty("dbName");
+                dbUser = props.getProperty("dbUser")==null?dbUser:props.getProperty("dbUser");
+                dbPass = props.getProperty("dbPass")==null?dbPass:props.getProperty("dbPass");
+                dbDriver = props.getProperty("dbDriver")==null?dbDriver:props.getProperty("dbDriver");
+                dbUrl = props.getProperty("dbUrl")==null?dbUrl:props.getProperty("dbUrl");
                 
                 isLoaded = true;
             }

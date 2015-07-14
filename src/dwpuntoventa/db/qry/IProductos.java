@@ -14,7 +14,7 @@ public interface IProductos {
     /**
      * Consulta para los productos
      */
-    public static String spConsultaProductos = "{call dnntienda.SP_CONSULTA_PRODUCTO(?,?)}";
+    public static String spConsultaProductos = "{call dnntienda.SP_CONSULTA_PRODUCTO(?,?,?)}";
     
     /**
      * Consulta para agregar un nuevo producto al catalogo

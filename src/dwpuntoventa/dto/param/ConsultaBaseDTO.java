@@ -13,6 +13,7 @@ public class ConsultaBaseDTO {
     
     public int tipoBusqueda = 0;
     public String filtro = "";
+    public int idtienda = 0;
 
     public int getTipoBusqueda() {
         return tipoBusqueda;
@@ -30,9 +31,17 @@ public class ConsultaBaseDTO {
         this.filtro = filtro;
     }
 
+    public int getIdtienda() {
+        return idtienda;
+    }
+
+    public void setIdtienda(int idtienda) {
+        this.idtienda = idtienda;
+    }
+
     @Override
     public String toString() {
-        return "ConsultaBaseDTO{" + "tipoBusqueda=" + tipoBusqueda + ", filtro=" + filtro + '}';
+        return "ConsultaBaseDTO{" + "tipoBusqueda=" + tipoBusqueda + ", filtro=" + filtro + ", idtienda=" + idtienda + '}';
     }
-    
+        
 }

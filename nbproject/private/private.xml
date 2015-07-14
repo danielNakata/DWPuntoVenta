@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/db/qry/IProductos.java</file>
-            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/db/qry/IProveedores.java</file>
-            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/db/imp/DAOProductos.java</file>
-            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/db/imp/DAOUsuarios.java</file>
+            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/gui/main/VMain.java</file>
+            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/utils/ModeloTabla.java</file>
+            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/gui/MArticulos/VCatArticulos.java</file>
+            <file>file:/C:/Users/danie_000/Proyectos/DWPuntoVenta/trunk/src/dwpuntoventa/gui/MAyuda/VAcercaDe.java</file>
         </group>
     </open-files>
 </project-private>
