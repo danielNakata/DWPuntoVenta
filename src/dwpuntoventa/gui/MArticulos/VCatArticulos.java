@@ -13,6 +13,14 @@ import dwpuntoventa.dto.param.ConsultaBaseDTO;
 import dwpuntoventa.utils.Config;
 import dwpuntoventa.utils.Constantes;
 import dwpuntoventa.utils.ModeloTabla;
+import java.util.regex.PatternSyntaxException;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -24,16 +32,21 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
     private ModeloTabla modeloFiltro = null;
     private int idtienda = -1;
     private static final int modeloSinEdicion = 1;
+    private TableRowSorter<ModeloTabla> ordenador = null;
     
     private String[] cols = {
-        "claveProducto-ID Art-90-s"
+        "claveProducto-ID Art-60-i"
             ,"codigoBarras-Cod Bar-150-s"
             ,"producto-Articulo-150-s"
-            ,"costo-Costo-100-f"
-            ,"venta-Venta-100-f"
-            ,"estado-Activo-100-s"
+            ,"costo-Costo-80-f"
+            ,"venta-Venta-80-f"
+            ,"estado-Estado-100-s"
             ,"unidad-Unidad-100-s"
             ,"tipo-Tipo-100-s"
+            ,"claveProveedor-ID Prov-60-i"
+            ,"proveedor-Proveedor-150-s"
+            ,"iva-IVA-50-f"
+            ,"ieps-IEPS-50-f"
     };
     
     /**
@@ -42,6 +55,8 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
     public VCatArticulos() {
         initComponents();
         poneColumnas();
+        cargaArticulos(Constantes.bsqArtTodos, "%");
+        creaListenerFiltro();
     }
     
     public VCatArticulos(int idtienda) {
@@ -49,9 +64,7 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
         initComponents();
         poneColumnas();
         cargaArticulos(Constantes.bsqArtTodos, "%");
-        AppLogger.Logger(Config.nombreApp, 3
-                    , this.getClass().toString()
-                    , new StringBuffer("Articulos Cargados correctamente"));
+        creaListenerFiltro();
     }
     
     /**
@@ -71,6 +84,8 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
             }            
             
             this.modeloOriginal.setTipoModelo(modeloSinEdicion);
+            
+            this.tblDatos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         }catch(Exception ex){
             System.out.println(Config.nombreApp+"-"
                     +new java.util.Date().toString()
@@ -116,6 +131,7 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
         ModeloTabla modelo = null;
         try{
             if(lista != null){
+                ordenador = null;
                 modelo = (ModeloTabla) this.tblDatos.getModel();
                 for(ProductoDTO dto:lista){
                     java.util.Vector vec = new java.util.Vector();
@@ -125,7 +141,11 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
                     modelo.addRow(vec);
                 }
                 
+                modelo.setTipoModelo(1);
                 this.tblDatos.setModel(modelo);
+                
+                ordenador = new TableRowSorter(this.tblDatos.getModel());
+                this.tblDatos.setRowSorter(ordenador);
             }
         }catch(Exception ex){
             System.out.println(Config.nombreApp+"-"
@@ -171,6 +191,11 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
 
         cmbTipoBsq.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1-Cve Prod", "2-Cve Prov", "3-Codigo Barras", "4-Nombre", "5-Estado", "6-Tipo", "7-Todos" }));
         cmbTipoBsq.setSelectedIndex(6);
+        cmbTipoBsq.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbTipoBsqActionPerformed(evt);
+            }
+        });
 
         btnCerrar.setText("C");
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
@@ -230,6 +255,12 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDatos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tblDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDatosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDatos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -244,8 +275,8 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -265,6 +296,130 @@ public class VCatArticulos extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnCerrarActionPerformed
 
+    private void tblDatosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDatosMouseClicked
+        try{
+            if(evt.getClickCount() == 2){
+                System.out.println("Fila Seleccionada: " + this.tblDatos.getSelectedRow());
+                int filaSel = this.tblDatos.getSelectedRow();
+                ProductoDTO prodSel = new ProductoDTO();
+                for(int i = 0; i<this.cols.length; i++){
+                    prodSel.getClass().getField(this.cols[i].split("-")[0]).set(prodSel, this.tblDatos.getValueAt(filaSel, i));
+                }
+                
+                System.out.println("Datos de la fila seleccionada: " + prodSel.toString());
+            }
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: tblDatosMouseClicked Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: tblDatosMouseClicked Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_tblDatosMouseClicked
+
+    private void cmbTipoBsqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoBsqActionPerformed
+        try{
+            if(this.cmbTipoBsq.getSelectedItem().toString().split("-")[0].equals("7")){
+                this.txtFiltro.setText("");
+            }
+            this.txtFiltro.requestFocus();
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: cmbTipoBsqActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: cmbTipoBsqActionPerformed Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_cmbTipoBsqActionPerformed
+
+    private void creaListenerFiltro(){
+        try{
+            txtFiltro.getDocument().addDocumentListener(new DocumentListener(){
+
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    filtraTabla();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    filtraTabla();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    filtraTabla();
+                }
+            
+            });
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: creaListenerFiltro Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: creaListenerFiltro Ex:" + ex.toString()));
+        }
+    }
+    
+    private void filtraTabla(){
+        RowFilter<ModeloTabla, Object> filtro = null;
+        try{
+            try{
+                int opsel = Integer.valueOf(this.cmbTipoBsq.getSelectedItem().toString().split("-")[0]);
+                switch(opsel){
+                    case 1:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 0);
+                        break;
+                        
+                    case 2:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 8);
+                        break;
+                        
+                    case 3:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 1);
+                        break;
+                        
+                    case 4:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 2);
+                        break;
+                        
+                    case 5:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 5);
+                        break;
+                        
+                    case 6:
+                        filtro = RowFilter.regexFilter(txtFiltro.getText().toUpperCase(), 7);
+                        break;
+                        
+                    case 7:
+                        filtro = RowFilter.regexFilter("", 0);
+                        break;
+                        
+                    default:
+                        filtro = RowFilter.regexFilter("", 0);
+                        break;
+                }
+                
+            }catch(PatternSyntaxException ex){
+                return;
+            }
+            ordenador.setRowFilter(filtro);
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: filtraTabla Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: filtraTabla Ex:" + ex.toString()));
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrar;
