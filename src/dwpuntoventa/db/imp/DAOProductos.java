@@ -68,6 +68,10 @@ public class DAOProductos extends DAOBase implements IProductos{
                                         case java.sql.Types.INTEGER:
                                             fila.getClass().getField(campo.getEtiquetaCampo()).setInt(fila, rs.getInt(campo.getEtiquetaCampo()));
                                             break;
+                                        
+                                        case java.sql.Types.BIGINT:
+                                            fila.getClass().getField(campo.getEtiquetaCampo()).setInt(fila, rs.getInt(campo.getEtiquetaCampo()));
+                                            break;
                                             
                                         case java.sql.Types.VARCHAR:
                                             fila.getClass().getField(campo.getEtiquetaCampo()).set(fila, rs.getString(campo.getEtiquetaCampo()));

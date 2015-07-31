@@ -19,7 +19,7 @@ public interface IProveedores {
     /**
      * Consulta para obtener los datos de un proveedor
      */
-    public static String spConsultaProveedor = "{call dnntienda.SP_CONSULTA_PROVEEDOR(?,?)}";
+    public static String spConsultaProveedor = "{call dnntienda.SP_CONSULTA_PROVEDOR(?,?,?)}";
     
     /**
      * Consulta para modificar el estatus de un proveedor

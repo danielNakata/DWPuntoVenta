@@ -8,6 +8,8 @@ package dwpuntoventa.gui.main;
 import appdan.applogger.main.AppLogger;
 import dwpuntoventa.gui.MArticulos.VCatArticulos;
 import dwpuntoventa.gui.MAyuda.VAcercaDe;
+import dwpuntoventa.gui.MProveedores.VCatProveedores;
+import dwpuntoventa.gui.MUsuarios.VCatUsuarios;
 import dwpuntoventa.utils.Config;
 
 /**
@@ -19,6 +21,8 @@ public class VMain extends javax.swing.JFrame {
     
     private VAcercaDe vacercade = null;
     private VCatArticulos vcatarticulos = null;
+    private VCatProveedores vcatproveedores = null;
+    private VCatUsuarios vcatusuarios = null;
     /**
      * Creates new form VMain
      */
@@ -69,9 +73,10 @@ public class VMain extends javax.swing.JFrame {
         actRepSalidas = new javax.swing.JMenuItem();
         actRepAjustes = new javax.swing.JMenuItem();
         menuUsuarios = new javax.swing.JMenu();
-        actAdminUser = new javax.swing.JMenuItem();
         actCatUsuarios = new javax.swing.JMenuItem();
+        actAdminUser = new javax.swing.JMenuItem();
         menuConfig = new javax.swing.JMenu();
+        actCatalogos = new javax.swing.JMenuItem();
         actTienda = new javax.swing.JMenuItem();
         actConexRem = new javax.swing.JMenuItem();
         actRespaldo = new javax.swing.JMenuItem();
@@ -83,6 +88,8 @@ public class VMain extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        pnlTabArticulos.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -103,7 +110,7 @@ public class VMain extends javax.swing.JFrame {
         pnlTabProveedores.setLayout(pnlTabProveedoresLayout);
         pnlTabProveedoresLayout.setHorizontalGroup(
             pnlTabProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1412, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         pnlTabProveedoresLayout.setVerticalGroup(
             pnlTabProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,7 +123,7 @@ public class VMain extends javax.swing.JFrame {
         pnlTabInventario.setLayout(pnlTabInventarioLayout);
         pnlTabInventarioLayout.setHorizontalGroup(
             pnlTabInventarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1412, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         pnlTabInventarioLayout.setVerticalGroup(
             pnlTabInventarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,7 +136,7 @@ public class VMain extends javax.swing.JFrame {
         pnlTabReportes.setLayout(pnlTabReportesLayout);
         pnlTabReportesLayout.setHorizontalGroup(
             pnlTabReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1412, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         pnlTabReportesLayout.setVerticalGroup(
             pnlTabReportesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -185,6 +192,11 @@ public class VMain extends javax.swing.JFrame {
         menuProveedores.setText("Proveedores");
 
         actCatProv.setText("Catalogo");
+        actCatProv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actCatProvActionPerformed(evt);
+            }
+        });
         menuProveedores.add(actCatProv);
 
         actNvoProv.setText("Nuevo");
@@ -231,15 +243,23 @@ public class VMain extends javax.swing.JFrame {
 
         menuUsuarios.setText("Usuarios");
 
+        actCatUsuarios.setText("Catalogo");
+        actCatUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actCatUsuariosActionPerformed(evt);
+            }
+        });
+        menuUsuarios.add(actCatUsuarios);
+
         actAdminUser.setText("Administracion");
         menuUsuarios.add(actAdminUser);
-
-        actCatUsuarios.setText("Catalogo");
-        menuUsuarios.add(actCatUsuarios);
 
         menuBar.add(menuUsuarios);
 
         menuConfig.setText("Configuracion");
+
+        actCatalogos.setText("Catalogos");
+        menuConfig.add(actCatalogos);
 
         actTienda.setText("Tienda");
         menuConfig.add(actTienda);
@@ -277,7 +297,7 @@ public class VMain extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelDesk)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 761, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,6 +416,86 @@ public class VMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_actSalirActionPerformed
 
+    private void actCatProvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actCatProvActionPerformed
+        try{
+            if(vcatproveedores == null){
+                vcatproveedores = new VCatProveedores(Config.idtienda);
+                
+                this.vcatproveedores.setVisible(true);
+                this.vcatproveedores.setSize(this.vcatproveedores.getPreferredSize().width,this.vcatproveedores.getPreferredSize().height);
+                this.vcatproveedores.setLocation(this.centrarVentana(this.vcatproveedores.getSize()));
+                
+                this.panelDesk.add(vcatproveedores);
+                try{
+                    this.vcatproveedores.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatproveedores);
+            }else{
+                this.vcatproveedores.setVisible(true);
+                this.vcatproveedores.setSize(this.vcatproveedores.getPreferredSize().width,this.vcatproveedores.getPreferredSize().height);
+                this.vcatproveedores.setLocation(this.centrarVentana(this.vcatproveedores.getSize()));
+                try{
+                    this.vcatproveedores.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatproveedores);
+            }
+            
+            this.vcatproveedores = null;
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: actCatProvActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: actCatProvActionPerformed Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_actCatProvActionPerformed
+
+    private void actCatUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actCatUsuariosActionPerformed
+        try{
+            if(vcatusuarios == null){
+                vcatusuarios = new VCatUsuarios(Config.idtienda);
+                
+                this.vcatusuarios.setVisible(true);
+                this.vcatusuarios.setSize(this.vcatusuarios.getPreferredSize().width,this.vcatusuarios.getPreferredSize().height);
+                this.vcatusuarios.setLocation(this.centrarVentana(this.vcatusuarios.getSize()));
+                
+                this.panelDesk.add(vcatusuarios);
+                try{
+                    this.vcatusuarios.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatusuarios);
+            }else{
+                this.vcatusuarios.setVisible(true);
+                this.vcatusuarios.setSize(this.vcatusuarios.getPreferredSize().width,this.vcatusuarios.getPreferredSize().height);
+                this.vcatusuarios.setLocation(this.centrarVentana(this.vcatusuarios.getSize()));
+                try{
+                    this.vcatusuarios.setSelected(true);
+                }catch(Exception ex){
+                    
+                }
+                this.panelDesk.setSelectedFrame(this.vcatusuarios);
+            }
+            
+            this.vcatusuarios = null;
+        }catch(Exception ex){
+            System.out.println(Config.nombreApp+"-"
+                    +new java.util.Date().toString()
+                    +" Clase: "+this.getClass().toString()
+                    +" Metodo: actCatUsuariosActionPerformed Ex: "+ ex);
+            AppLogger.Logger(Config.nombreApp, 1
+                    , this.getClass().toString()
+                    , new StringBuffer("Metodo: actCatUsuariosActionPerformed Ex:" + ex.toString()));
+        }
+    }//GEN-LAST:event_actCatUsuariosActionPerformed
+
     
     /**
      * Metodo para poner la ventana al centro del JDesktop principal
@@ -420,6 +520,7 @@ public class VMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem actCatArt;
     private javax.swing.JMenuItem actCatProv;
     private javax.swing.JMenuItem actCatUsuarios;
+    private javax.swing.JMenuItem actCatalogos;
     private javax.swing.JMenuItem actConexRem;
     private javax.swing.JMenuItem actDatosTienda;
     private javax.swing.JMenuItem actExistenciaDia;

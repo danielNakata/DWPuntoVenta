@@ -6,6 +6,7 @@
 package dwpuntoventa.dto;
 
 import dwpuntoventa.dto.out.ProductoDTO;
+import dwpuntoventa.dto.out.ProveedorDTO;
 import dwpuntoventa.dto.out.UsuarioDTO;
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class RespGralDTO {
     private UsuarioDTO usuarioLog = null;
     private java.util.ArrayList<UsuarioDTO> listaUsuarioDTO = null;
     private java.util.ArrayList<ProductoDTO> listaProductoDTO = null;
+    private java.util.ArrayList<ProveedorDTO> listaProveedorDTO = null;
 
     public int getRes() {
         return res;
@@ -78,9 +80,17 @@ public class RespGralDTO {
         this.listaProductoDTO = listaProductoDTO;
     }
 
+    public ArrayList<ProveedorDTO> getListaProveedorDTO() {
+        return listaProveedorDTO;
+    }
+
+    public void setListaProveedorDTO(ArrayList<ProveedorDTO> listaProveedorDTO) {
+        this.listaProveedorDTO = listaProveedorDTO;
+    }
+
     @Override
     public String toString() {
-        return "RespGralDTO{" + "res=" + res + ", msg=" + msg + ", numReg=" + numReg + ", listaCampos=" + listaCampos + ", usuarioLog=" + usuarioLog + ", listaUsuarioDTO=" + listaUsuarioDTO + ", listaProductoDTO=" + listaProductoDTO + '}';
+        return "RespGralDTO{" + "res=" + res + ", msg=" + msg + ", numReg=" + numReg + ", listaCampos=" + listaCampos + ", usuarioLog=" + usuarioLog + ", listaUsuarioDTO=" + listaUsuarioDTO + ", listaProductoDTO=" + listaProductoDTO + ", listaProveedorDTO=" + listaProveedorDTO + '}';
     }
 
     

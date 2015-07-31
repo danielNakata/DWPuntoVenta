@@ -19,7 +19,7 @@ public interface IUsuarios {
     /**
      * Llamada al SP para obtener los datos del usuario
      */
-    public static String spConsultaDatosUsuario = "{call dnntienda.SP_CONSULTA_DATOS_USUARIO(?,?)}";
+    public static String spConsultaDatosUsuario = "{call dnntienda.SP_CONSULTA_DATOS_USUARIO(?,?,?)}";
     
     /**
      * Consulta para agregar un usuario nuevo

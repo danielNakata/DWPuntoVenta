@@ -1,1 +1,1 @@
-[Mon Jul 13 23:44:09 CDT 2015] DWPuntoVenta Clase: class dwpuntoventa.gui.MArticulos.VCatArticulos NORMAL:  MENSAJE: Articulos Cargados correctamente
+[Sun Jul 19 09:33:58 CDT 2015] DWPuntoVenta Clase: class dwpuntoventa.db.imp.DAOProductos EXCEPCION:  MENSAJE: Metodo: consultaDatosProductos Ex:java.lang.IllegalArgumentException: Can not set int field dwpuntoventa.dto.out.ProductoDTO.claveProducto to java.lang.String
